@@ -2,6 +2,7 @@ package main
 
 import (
   "github.com/gin-gonic/gin"
+  "fmt"
   //"encoding/json"
   //"database/sql"
 )
@@ -12,7 +13,7 @@ type Endpoint struct {
   Handler gin.HandlerFunc
 }
 
-var endpoints = []Endpoint{ MakeEndpoint("/login", 0, LoginUser), MakeEndpoint("/signup", 1, SignUpUser) }
+var endpoints = []Endpoint{ MakeEndpoint("/login", 1, LoginUser), MakeEndpoint("/signup", 1, SignUpUser) }
 
 func DefineRoutes(g *gin.Engine) {
   for i := range(endpoints) {
@@ -44,7 +45,13 @@ func LoginUser(c *gin.Context) {
 }
 
 func SignUpUser(c *gin.Context) {
-
+  username := c.DefaultPostForm("username", "")
+  password := c.DefaultPostForm("password", "")
+  println(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
+  _, err := db.Exec(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
+  if err != nil {
+    panic(err)
+  }
 }
 
 
@@ -59,8 +66,7 @@ func MakeEndpoint(path string, method int, callback func(c *gin.Context)) Endpoi
 func CheckUserAndPassword(username string, password string) bool {
   un := ""
   pwd := ""
-  // dd := 0
-   err := db.QueryRow("SELECT username, password FROM users where username=\"ramin\"").Scan(&un, &pwd)
+  err := db.QueryRow(fmt.Sprintf("SELECT name, password FROM account where name='%s'", username)).Scan(&un, &pwd)
   if err != nil {
     panic(err.Error()) // proper error handling instead of panic in your app
   }
