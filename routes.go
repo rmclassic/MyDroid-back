@@ -22,6 +22,12 @@ func DefineRoutes(g *gin.Engine) {
     } else if endpoints[i].Method == 1 {
       g.POST(endpoints[i].Path, endpoints[i].Handler)
     }
+    g.OPTIONS(endpoints[i].Path, func(c *gin.Context){
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+        c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+
+        c.String(200, "pong")
+      })
   }
 }
 
