@@ -10,6 +10,8 @@ import (
 func SignUpUser(c *gin.Context) {
   username := c.DefaultPostForm("username", "")
   password := c.DefaultPostForm("password", "")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
   println(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
   _, err := db.Exec(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
   if err != nil {
@@ -41,6 +43,8 @@ func CheckUserAndPassword(username string, password string) (bool, error) {
 func LoginUser(c *gin.Context) {
   username := c.DefaultPostForm("username", "")
   password := c.DefaultPostForm("password", "")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
   println(username, password)
   if username != "" || password != "" {
      authenticated, err := CheckUserAndPassword(username, password)
