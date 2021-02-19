@@ -57,7 +57,7 @@ DROP TABLE IF EXISTS `app`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `app` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `publisher_id` bigint(20) NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE `category` (
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_shit` (`parent_id`),
+  KEY `fk_pid` (`parent_id`),
   CONSTRAINT `fk_shit` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
