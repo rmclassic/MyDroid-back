@@ -4,7 +4,9 @@ import (
   "github.com/gin-gonic/gin"
   "fmt"
   "io/ioutil"
+  "mydroid/models"
   "encoding/json"
+  "errors"
 )
 
 
@@ -86,4 +88,20 @@ func LoginUser(c *gin.Context) {
        })
      }
   }
+}
+
+func GetAccountByID(pid int) (*models.Account, error) {
+  rows, err := db.Query(fmt.Sprintf("SELECT id,name,type,password FROM account WHERE id=%d", pid))
+  if err != nil {
+    return nil, err
+  }
+
+  if !rows.Next() {
+    return nil, errors.New("No accounts found with provided ID")
+  }
+
+  var acc models.Account
+
+  rows.Scan(&acc.ID, &acc.Name, &acc.Type, &acc.Password)
+  return &acc, nil
 }
