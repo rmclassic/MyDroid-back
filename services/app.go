@@ -40,11 +40,10 @@ func GetAllApps(c *gin.Context) {
         })
       }
 
-      apps = append(apps, tempapp)
-    }
-
     tempapp.Publisher = publisher.Name
-    payload, _ := json.Marshal(tempapp)
+    apps = append(apps, tempapp)
+  }
+    payload, _ := json.Marshal(apps)
     c.JSON(200, gin.H{
       "result": "fail",
       "data": string(payload),
