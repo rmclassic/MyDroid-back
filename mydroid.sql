@@ -57,12 +57,15 @@ DROP TABLE IF EXISTS `app`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `app` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `publisher_id` bigint(20) NOT NULL,
+  `publisher_id` int NOT NULL,
+  `download_url` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `thumb_url` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `date_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_pid` FOREIGN KEY (`publisher_id`) REFERENCES account(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -87,8 +90,8 @@ CREATE TABLE `app_category` (
   `category_id` int(11) NOT NULL,
   PRIMARY KEY (`app_id`,`category_id`),
   KEY `fk_cat_id` (`category_id`),
-  CONSTRAINT `fk_app_id` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`),
-  CONSTRAINT `fk_cat_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
+  CONSTRAINT `fk_app_id` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_cat_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,8 +116,8 @@ CREATE TABLE `app_management` (
   `user_id` int(11) NOT NULL,
   KEY `app_id` (`app_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `app_management_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`),
-  CONSTRAINT `app_management_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`)
+  CONSTRAINT `app_management_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `app_management_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -135,12 +138,12 @@ DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_shit` (`parent_id`),
-  CONSTRAINT `fk_shit` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)
+  CONSTRAINT `fk_shit` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -165,8 +168,8 @@ CREATE TABLE `comment` (
   `user_id` int(11) NOT NULL,
   KEY `app_id` (`app_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`),
-  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`)
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -191,8 +194,8 @@ CREATE TABLE `download` (
   `user_id` int(11) NOT NULL,
   KEY `app_id` (`app_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `download_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`),
-  CONSTRAINT `download_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`)
+  CONSTRAINT `download_ibfk_1` FOREIGN KEY (`app_id`) REFERENCES `app` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `download_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -217,8 +220,8 @@ CREATE TABLE `message` (
   `recv_id` int(11) NOT NULL,
   PRIMARY KEY (`sender_id`,`recv_id`),
   KEY `fk_recv` (`recv_id`),
-  CONSTRAINT `fk_recv` FOREIGN KEY (`recv_id`) REFERENCES `account` (`id`),
-  CONSTRAINT `fk_sender` FOREIGN KEY (`sender_id`) REFERENCES `account` (`id`)
+  CONSTRAINT `fk_recv` FOREIGN KEY (`recv_id`) REFERENCES `account` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_sender` FOREIGN KEY (`sender_id`) REFERENCES `account` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -243,8 +246,8 @@ CREATE TABLE `user_management` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`manager_id`,`user_id`),
   KEY `fk_uid` (`user_id`),
-  CONSTRAINT `fk_mid` FOREIGN KEY (`manager_id`) REFERENCES `account` (`id`),
-  CONSTRAINT `fk_uid` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`)
+  CONSTRAINT `fk_mid` FOREIGN KEY (`manager_id`) REFERENCES `account` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_uid` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
