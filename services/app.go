@@ -9,6 +9,8 @@ import (
 )
 
 func GetAllApps(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
   pagestr := c.DefaultQuery("page", "0")
   per_pagestr := c.DefaultQuery("per_page", "10")
   page, _ := strconv.Atoi(pagestr)
