@@ -40,6 +40,7 @@ func GetAllApps(c *gin.Context) {
         })
       }
 
+    tempapp.ImageUrl = fmt.Sprintf("/assets/thumbs/%d.jpg", tempapp.ID)
     tempapp.Publisher = publisher.Name
     apps = append(apps, tempapp)
   }
@@ -52,7 +53,7 @@ func GetAllApps(c *gin.Context) {
   })
 }
 
-func GetBestApps(c *gin.Context) {
+func GetBest(c *gin.Context) {
   pagestr := c.DefaultQuery("page", "0")
   category := c.Param("category")
   per_pagestr := c.DefaultQuery("per_page", "10")
@@ -84,6 +85,7 @@ func GetBestApps(c *gin.Context) {
         })
       }
 
+      tempapp.ImageUrl =  fmt.Sprintf("/assets/thumbs/%d.jpg", tempapp.ID)
       tempapp.Publisher = publisher.Name
       apps = append(apps, tempapp)
     }

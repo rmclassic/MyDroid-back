@@ -7,4 +7,5 @@ type App struct {
   Publisher string
   Category string
   DownloadUrl string
+  ImageUrl string
 }

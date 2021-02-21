@@ -10,6 +10,7 @@ import (
 
 func main() {
   g := gin.Default()
+  g.Static("/assets", "./assets")
   services.InitializeDb()
   DefineRoutes(g)
 
