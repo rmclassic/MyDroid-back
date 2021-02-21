@@ -13,9 +13,11 @@ type Endpoint struct {
   Handler gin.HandlerFunc
 }
 
-var endpoints = []Endpoint{ MakeEndpoint("/login", 1, services.LoginUser),
-                            MakeEndpoint("/signup", 1, services.SignUpUser),
-                            MakeEndpoint("/app/get", 0, services.GetAllApps)}
+var endpoints = []Endpoint{ MakeEndpoint("/user/login", 1, services.LoginUser),
+                            MakeEndpoint("/user/signup", 1, services.SignUpUser),
+                            //MakeEndpoint("/app/upload", 1, services.UploadApp),
+                            MakeEndpoint("/app/get", 0, services.GetAllApps),
+                           }
 
 func DefineRoutes(g *gin.Engine) {
   for i := range(endpoints) {

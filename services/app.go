@@ -25,20 +25,20 @@ func GetAllApps(c *gin.Context) {
   apps := make([]models.App, 0)
 
   for rows.Next() {
-    var pid int
+      var pid int
 
-    var tempapp models.App
-    rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &pid)
+      var tempapp models.App
+      rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &pid)
 
-    //fmt.Println(string(tempapp.Name))
-    //rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &tempapp.Publisher)
-    publisher, err := GetAccountByID(pid)
-    if err != nil {
-      c.JSON(200, gin.H{
-        "result": "fail",
-        "message": err,
-      })
-    }
+      //fmt.Println(string(tempapp.Name))
+      //rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &tempapp.Publisher)
+      publisher, err := GetAccountByID(pid)
+      if err != nil {
+        c.JSON(200, gin.H{
+          "result": "fail",
+          "message": err,
+        })
+      }
 
     apps = append(apps, tempapp)
   }
@@ -64,22 +64,5 @@ func GetBestApps(c *gin.Context) {
       "result": "fail",
       "data": string(payload),
     })
-  }
 
-  var tempapp models.App
-  rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &pid)
-  publisher, err := GetAccountByID(pid)
-  if err != nil {
-    c.JSON(200, gin.H{
-      "result": "fail",
-      "message": err,
-    })
-  }
-
-  tempapp.Publisher = publisher.Name
-  payload, _ := json.Marshal(tempapp)
-  c.JSON(200, gin.H{
-    "result": "fail",
-    "data": string(payload),
-  })
 }

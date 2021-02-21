@@ -142,8 +142,7 @@ CREATE TABLE `category` (
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_shit` (`parent_id`),
-  CONSTRAINT `fk_shit` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_pid` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
