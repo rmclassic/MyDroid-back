@@ -18,6 +18,7 @@ var endpoints = []Endpoint{ MakeEndpoint("/user/login", 1, services.LoginUser),
                             //MakeEndpoint("/app/upload", 1, services.UploadApp),
                             MakeEndpoint("/app/get", 0, services.GetAllApps),
                             MakeEndpoint("/best/:category", 0, services.GetBest),
+                            MakeEndpoint("/app/get/:id", 0, services.GetAppById),
                            }
 
 func DefineRoutes(g *gin.Engine) {

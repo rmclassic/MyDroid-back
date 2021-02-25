@@ -138,11 +138,10 @@ DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_pid` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)ON DELETE CASCADE
+  CONSTRAINT `fk_catpid` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`)ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -100,3 +100,33 @@ func GetBest(c *gin.Context) {
       "data": string(payload),
     })
 }
+
+func GetAppById(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+  id, err := strconv.Atoi(c.Param("id"))
+  if err != nil {
+    c.JSON(200, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+  }
+
+  rows, err := db.Query(fmt.Sprintf("select description, date_modified, app_name, account.name as publisher , category.name as category, app_id from ((select *, name AS app_name from app JOIN app_category ON id=app_category.app_id) d JOIN category ON d.category_id=category.id JOIN account ON publisher_id=account.id) WHERE app_id=%d", id))
+  if err != nil {
+    c.JSON(200, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+  }
+  var app models.App
+  s := ""
+  if rows.Next() {
+    rows.Scan(&app.Description, &s, &app.Name, &app.Publisher, &app.Category, nil)
+
+  }
+  c.JSON(200, gin.H{
+    "result": "success",
+    "message": app,
+  })
+}
