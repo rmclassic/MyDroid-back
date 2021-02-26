@@ -66,6 +66,7 @@ func GetBest(c *gin.Context) {
   page, _ := strconv.Atoi(pagestr)
   per_page, _ := strconv.Atoi(per_pagestr)
   query := fmt.Sprintf("SELECT *, COUNT(app_id) AS cnt FROM ((app JOIN download ON app.id=download.app_id) JOIN (select name as category, app_id as capp_id from app_category JOIN category ON category_id=id) cat ON cat.capp_id=app_id) WHERE category='%s' GROUP BY app_id ORDER BY cnt DESC LIMIT %d, %d", category, page, per_page)
+  println(query)
   rows, err := db.Query(query)
   if err != nil {
     c.JSON(200, gin.H{
@@ -113,7 +114,9 @@ func GetAppById(c *gin.Context) {
     })
   }
 
-  rows, err := db.Query(fmt.Sprintf("select description, date_modified, app_name, account.name as publisher , category.name as category, app_id from ((select *, name AS app_name from app JOIN app_category ON id=app_category.app_id) d JOIN category ON d.category_id=category.id JOIN account ON publisher_id=account.id) WHERE app_id=%d", id))
+  query := fmt.Sprintf("select description, date_modified, app_name, account.name as publisher , category.name as category, app_id from ((select *, name AS app_name from app JOIN app_category ON id=app_category.app_id) d JOIN category ON d.category_id=category.id JOIN account ON publisher_id=account.id) WHERE app_id=%d", id)
+  println(query)
+  rows, err := db.Query(query)
   if err != nil {
     c.JSON(200, gin.H{
       "result": "fail",
