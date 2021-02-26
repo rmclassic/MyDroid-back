@@ -125,6 +125,7 @@ func GetAppById(c *gin.Context) {
     rows.Scan(&app.Description, &s, &app.Name, &app.Publisher, &app.Category, nil)
     app.ImageUrl = fmt.Sprintf("/assets/thumbs/%d.jpg", id)
     app.DownloadUrl = fmt.Sprintf("/assets/bin/%d.apk", id)
+    app.ID = id
   }
   c.JSON(200, gin.H{
     "result": "success",
