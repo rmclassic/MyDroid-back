@@ -43,19 +43,10 @@ func GetCommentsForApp(c *gin.Context) {
     comments = append(comments, comment)
   }
 
-  commstr, err := json.Marshal(comments)
-  if err != nil {
-    c.JSON(200, gin.H{
-      "result": "success",
-      "message": err,
-    })
-    return
-  }
-
 
   c.JSON(200, gin.H{
     "result": "success",
-    "message": string(commstr),
+    "message": comments
   })
 }
 
