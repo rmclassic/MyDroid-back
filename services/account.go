@@ -90,18 +90,20 @@ func LoginUser(c *gin.Context) {
   }
 }
 
-func GetAccountByID(pid int) (*models.Account, error) {
-  rows, err := db.Query(fmt.Sprintf("SELECT id,name,type,password FROM account WHERE id=%d", pid))
+func GetAccountByID(pid int) (models.Account, error) {
+  var acc models.Account
+  query := fmt.Sprintf("SELECT id,name,type,password FROM account WHERE id=%d", pid);
+  println(query)
+  rows, err := db.Query(query)
   if err != nil {
-    return nil, err
+    return acc, err
   }
 
   if !rows.Next() {
-    return nil, errors.New("No accounts found with provided ID")
+    return acc, errors.New("No accounts found with provided ID")
   }
 
-  var acc models.Account
 
   rows.Scan(&acc.ID, &acc.Name, &acc.Type, &acc.Password)
-  return &acc, nil
+  return acc, nil
 }

@@ -40,6 +40,7 @@ func GetAllApps(c *gin.Context) {
           "result": "fail",
           "message": err,
         })
+        return
       }
 
     tempapp.ImageUrl = fmt.Sprintf("/assets/thumbs/%d.jpg", tempapp.ID)
@@ -64,8 +65,8 @@ func GetBest(c *gin.Context) {
 
   page, _ := strconv.Atoi(pagestr)
   per_page, _ := strconv.Atoi(per_pagestr)
-
-  rows, err := db.Query(fmt.Sprintf("SELECT *, COUNT(app_id) AS cnt FROM ((app JOIN download ON app.id=download.app_id) JOIN (select name as category, app_id as capp_id from app_category JOIN category ON category_id=id) cat ON cat.capp_id=app_id) WHERE category='%s' GROUP BY app_id ORDER BY cnt DESC LIMIT %d, %d", category, page, per_page))
+  query := fmt.Sprintf("SELECT *, COUNT(app_id) AS cnt FROM ((app JOIN download ON app.id=download.app_id) JOIN (select name as category, app_id as capp_id from app_category JOIN category ON category_id=id) cat ON cat.capp_id=app_id) WHERE category='%s' GROUP BY app_id ORDER BY cnt DESC LIMIT %d, %d", category, page, per_page)
+  rows, err := db.Query(query)
   if err != nil {
     c.JSON(200, gin.H{
       "result": "fail",
@@ -80,7 +81,7 @@ func GetBest(c *gin.Context) {
 
       var tempapp models.App
       var wow string
-      rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &pid, &wow, &wow, &wow, &tempapp.Category, nil, nil)
+      rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &pid, &wow, &wow, &wow, &wow, &wow, &tempapp.Category, nil, nil)
       publisher, err := GetAccountByID(pid)
       if err != nil {
         c.JSON(200, gin.H{
