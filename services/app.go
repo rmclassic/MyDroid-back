@@ -6,6 +6,7 @@ import (
   "strconv"
   "mydroid/models"
   "encoding/json"
+  "net/http"
 )
 
 func GetAllApps(c *gin.Context) {
@@ -127,7 +128,7 @@ func GetAppById(c *gin.Context) {
   if rows.Next() {
     rows.Scan(&app.Description, &s, &app.Name, &app.Publisher, &app.Category, nil)
     app.ImageUrl = fmt.Sprintf("/assets/thumbs/%d.jpg", id)
-    app.DownloadUrl = fmt.Sprintf("/app/download/%d.apk", id)
+    app.DownloadUrl = fmt.Sprintf("/app/download/%d", id)
     app.ID = id
   }
   c.JSON(200, gin.H{
@@ -136,7 +137,17 @@ func GetAppById(c *gin.Context) {
   })
 }
 
-// func DownloadApp(c *gin.Context) {
-//   app := c.Param("app")
-//   c.
-// }
+func DownloadApp(c *gin.Context) {
+  id, err := strconv.Atoi(c.Param("id"))
+  if err != nil {
+    c.JSON(200, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+  }
+
+  query := fmt.Sprintf("INSERT INTO download VALUES (%d, %d)", id, 3) //reconsider user after auth
+  db.Exec(query)
+  c.Redirect(http.StatusFound, fmt.Sprintf("http://localhost:8080/assets/apps/%d.apk", id))
+
+}
