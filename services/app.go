@@ -103,6 +103,41 @@ func GetBest(c *gin.Context) {
     })
 }
 
+func GetLatest(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+  category := c.Param("category")
+
+
+  query := fmt.Sprintf("select app.id, app.name, description, date_modified, publisher_id, account.name, app_category.category_id, category.name FROM app JOIN account ON publisher_id=account.id JOIN app_category ON app.id=app_category.app_id JOIN category ON category_id=category.id where category.name='%s' ORDER BY date_modified DESC;", category)
+  rows, err := db.Query(query)
+  if err != nil {
+    c.JSON(200, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+  }
+
+  apps := make([]models.App, 0)
+
+  for rows.Next() {
+
+      var tempapp models.App
+      var wow string
+      rows.Scan(&tempapp.ID, &tempapp.Name, &tempapp.Description, &wow, &wow, &tempapp.Publisher, &wow, &tempapp.Category)
+
+      tempapp.ImageUrl =  fmt.Sprintf("/assets/thumbs/%d.jpg", tempapp.ID)
+      apps = append(apps, tempapp)
+    }
+
+    c.JSON(200, gin.H{
+      "result": "success",
+      "data": apps,
+    })
+}
+
+
+
 func GetAppById(c *gin.Context) {
   c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
   c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
