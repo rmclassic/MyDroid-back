@@ -25,7 +25,7 @@ func SignUpUser(c *gin.Context) {
 
   username := root["username"]
   password := root["password"]
-  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
   println(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
   _, err = db.Exec(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
@@ -72,8 +72,10 @@ func LoginUser(c *gin.Context) {
   username := root["username"]
   password := root["password"]
   println(username, password)
-  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+  c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
+  c.SetCookie("X-AUTH", "FUCKAUTH", 3600, "/", "localhost:8080", false, true)
   if username != "" || password != "" {
      authenticated, err := CheckUserAndPassword(username, password)
      if authenticated {
@@ -88,6 +90,7 @@ func LoginUser(c *gin.Context) {
        })
      }
   }
+
 }
 
 func GetAccountByID(pid int) (models.Account, error) {

@@ -96,10 +96,9 @@ func GetBest(c *gin.Context) {
       apps = append(apps, tempapp)
     }
 
-    payload, _ := json.Marshal(apps)
     c.JSON(200, gin.H{
       "result": "success",
-      "data": string(payload),
+      "data": apps,
     })
 }
 
@@ -128,7 +127,7 @@ func GetAppById(c *gin.Context) {
   if rows.Next() {
     rows.Scan(&app.Description, &s, &app.Name, &app.Publisher, &app.Category, nil)
     app.ImageUrl = fmt.Sprintf("/assets/thumbs/%d.jpg", id)
-    app.DownloadUrl = fmt.Sprintf("/assets/bin/%d.apk", id)
+    app.DownloadUrl = fmt.Sprintf("/app/download/%d.apk", id)
     app.ID = id
   }
   c.JSON(200, gin.H{
@@ -136,3 +135,8 @@ func GetAppById(c *gin.Context) {
     "message": app,
   })
 }
+
+// func DownloadApp(c *gin.Context) {
+//   app := c.Param("app")
+//   c.
+// }

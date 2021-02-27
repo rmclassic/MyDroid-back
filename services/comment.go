@@ -46,7 +46,7 @@ func GetCommentsForApp(c *gin.Context) {
 
   c.JSON(200, gin.H{
     "result": "success",
-    "message": comments
+    "message": comments,
   })
 }
 
