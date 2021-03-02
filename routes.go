@@ -23,6 +23,7 @@ var endpoints = []Endpoint{ MakeEndpoint("/user/login", 1, services.LoginUser),
                             MakeEndpoint("/app/comments/:id", 0, services.GetCommentsForApp),
                             MakeEndpoint("/app/comments", 1, services.PostComment),
                             MakeEndpoint("/app/download/:id", 0, services.DownloadApp),
+                            MakeEndpoint("/category/all", 0, services.GetAllCategories),
                            }
 
 func DefineRoutes(g *gin.Engine) {
