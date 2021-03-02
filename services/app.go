@@ -177,6 +177,8 @@ func GetAppById(c *gin.Context) {
 }
 
 func DownloadApp(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
   id, err := strconv.Atoi(c.Param("id"))
   if err != nil {
     c.JSON(200, gin.H{
