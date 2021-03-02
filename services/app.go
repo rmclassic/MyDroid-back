@@ -7,6 +7,10 @@ import (
   "mydroid/models"
   "encoding/json"
   "net/http"
+  "encoding/base64"
+  "io/ioutil"
+  "os"
+  //"reflect"
 )
 
 func GetAllApps(c *gin.Context) {
@@ -185,4 +189,80 @@ func DownloadApp(c *gin.Context) {
   db.Exec(query)
   c.Redirect(http.StatusFound, fmt.Sprintf("http://localhost:8080/assets/apps/%d.apk", id))
 
+}
+
+func UploadApp(c *gin.Context) {
+  data, err := ioutil.ReadAll(c.Request.Body)
+  if err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+
+  var jsonpl map[string]interface{}
+  json.Unmarshal([]byte(data), &jsonpl)
+
+
+
+  query := fmt.Sprintf("INSERT INTO app(name, description, publisher_id, download_url, thumb_url) VALUES ('%s', '%s', '%d', '', '')", jsonpl["name"].(string), jsonpl["description"].(string), int(jsonpl["publisher_id"].(float64)))
+  res, err := db.Exec(query)
+  if err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+
+  app_id, _ := res.LastInsertId()
+  query = fmt.Sprintf("INSERT INTO app_category VALUES (%d, %d)", app_id, int(jsonpl["category_id"].(float64)))
+  res, err = db.Exec(query)
+  if err != nil {
+    query = fmt.Sprintf("DELETE FROM app WHERE id=%d", app_id)
+    db.Exec(query)
+
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+
+
+
+  dec, err := base64.StdEncoding.DecodeString(jsonpl["image"].(string))
+  if err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+
+  f, err := os.Create("assets/thumbs/" + strconv.Itoa(int(app_id)) + ".jpg")
+  if err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+  defer f.Close()
+
+  if _, err := f.Write(dec); err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
+  if err := f.Sync(); err != nil {
+    c.JSON(400, gin.H{
+      "result": "fail",
+      "message": err,
+    })
+    return
+  }
 }
