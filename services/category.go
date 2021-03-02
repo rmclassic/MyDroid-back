@@ -6,6 +6,8 @@ import (
 )
 
 func GetAllCategories(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
   query := "SELECT id, name, parent_id FROM category"
   rows, err := db.Query(query)
   if err != nil {
