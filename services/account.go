@@ -34,24 +34,25 @@ func SignUpUser(c *gin.Context) {
   }
 }
 
-func CheckUserAndPassword(username string, password string) (bool, error) {
+func CheckUserAndPassword(username string, password string) (bool, int, error) {
   un := ""
   pwd := ""
-  err := db.QueryRow(fmt.Sprintf("SELECT name, password FROM account where name='%s'", username)).Scan(&un, &pwd)
+  id := 0
+  err := db.QueryRow(fmt.Sprintf("SELECT id, name, password FROM account where name='%s'", username)).Scan(&id, &un, &pwd)
 
   if un == "" {
-    return false, err
+    return false, -1, err
 
   }
 
   if err != nil {
-    return false, err // proper error handling instead of panic in your app
+    return false, -1, err // proper error handling instead of panic in your app
   }
 
   if pwd == password {
-    return true, nil
+    return true, id, nil
   }
-  return false, nil
+  return false,-1, nil
 }
 
 
@@ -77,11 +78,13 @@ func LoginUser(c *gin.Context) {
 
   c.SetCookie("X-AUTH", "FUCKAUTH", 3600, "/", "localhost:8080", false, true)
   if username != "" || password != "" {
-     authenticated, err := CheckUserAndPassword(username, password)
+     authenticated, user_id,err := CheckUserAndPassword(username, password)
      if authenticated {
        c.JSON(200, gin.H{
          "result": "success",
-         "message": "",
+         "message": gin.H{
+           "user_id": user_id,
+         },
        })
      } else {
        c.JSON(200, gin.H{

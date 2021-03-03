@@ -194,6 +194,8 @@ func DownloadApp(c *gin.Context) {
 }
 
 func UploadApp(c *gin.Context) {
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
   data, err := ioutil.ReadAll(c.Request.Body)
   if err != nil {
     c.JSON(400, gin.H{

@@ -36,7 +36,7 @@ func DefineRoutes(g *gin.Engine) {
 
     //for CORS bypass
     g.OPTIONS(endpoints[i].Path, func(c *gin.Context){
-        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
         c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, *")
         c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
         c.String(200, "pong")
