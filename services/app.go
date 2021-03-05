@@ -233,8 +233,9 @@ func DownloadApp(c *gin.Context) {
 }
 
 func UploadApp(c *gin.Context) {
-  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
   c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
   data, err := ioutil.ReadAll(c.Request.Body)
   if err != nil {
     c.JSON(400, gin.H{
@@ -244,12 +245,21 @@ func UploadApp(c *gin.Context) {
     return
   }
 
+  token, _ := c.Cookie("X-AUTH")
+  userid := GetUserByToken(token)
+
   var jsonpl map[string]interface{}
   json.Unmarshal([]byte(data), &jsonpl)
 
+  if userid == -1 {
+      c.JSON(403, gin.H{
+        "result": "fail",
+        "message": "Not authorized to do this operation",
+      })
+      return
+  }
 
-
-  query := fmt.Sprintf("INSERT INTO app(name, description, publisher_id, download_url, thumb_url) VALUES ('%s', '%s', '%d', '', '')", jsonpl["name"].(string), jsonpl["description"].(string), int(jsonpl["publisher_id"].(float64)))
+  query := fmt.Sprintf("INSERT INTO app(name, description, publisher_id, download_url, thumb_url) VALUES ('%s', '%s', '%d', '', '')", jsonpl["name"].(string), jsonpl["description"].(string), userid)
   res, err := db.Exec(query)
   if err != nil {
     c.JSON(400, gin.H{

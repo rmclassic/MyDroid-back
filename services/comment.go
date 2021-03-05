@@ -52,8 +52,9 @@ func GetCommentsForApp(c *gin.Context) {
 
 
 func PostComment(c *gin.Context) {
-  c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
   c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+  c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
   var root map[string]interface{}
 
@@ -66,8 +67,19 @@ func PostComment(c *gin.Context) {
     return
   }
 
+  token, _ := c.Cookie("X-AUTH")
+  userid := GetUserByToken(token)
+
+  if userid == -1 {
+      c.JSON(403, gin.H{
+        "result": "fail",
+        "message": "Not authorized to do this operation",
+      })
+      return
+  }
+
   json.Unmarshal(body, &root)
-  query := fmt.Sprintf("INSERT INTO comment values (%d, %d, '%s')", int(root["app"].(float64)), int(root["sender"].(float64)), root["content"].(string))
+  query := fmt.Sprintf("INSERT INTO comment values (%d, %d, '%s')", int(root["app"].(float64)), userid, root["content"].(string))
   println(query)
   db.Exec(query)
 

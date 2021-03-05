@@ -76,10 +76,12 @@ func LoginUser(c *gin.Context) {
   c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
   c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
-  c.SetCookie("X-AUTH", "FUCKAUTH", 3600, "/", "localhost:8080", false, true)
   if username != "" || password != "" {
-     authenticated, user_id,err := CheckUserAndPassword(username, password)
+     authenticated, user_id, _ := CheckUserAndPassword(username, password)
      if authenticated {
+       token := GenerateUserToken(user_id)
+       c.SetCookie("X-AUTH", token, 3600, "/", "localhost", false, true)
+
        c.JSON(200, gin.H{
          "result": "success",
          "message": gin.H{
@@ -87,9 +89,9 @@ func LoginUser(c *gin.Context) {
          },
        })
      } else {
-       c.JSON(200, gin.H{
+       c.JSON(403, gin.H{
          "result": "fail",
-         "message": err,
+         "message": "The given credentials were not right",
        })
      }
   }
