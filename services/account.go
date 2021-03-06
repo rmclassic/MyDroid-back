@@ -27,6 +27,14 @@ func SignUpUser(c *gin.Context) {
   password := root["password"]
   c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
+  if CheckUsernameExists(username) {
+    c.JSON(403, gin.H{
+      "result": "fail",
+      "message": "This username already exitsts in database",
+    })
+    return
+  }
+
   println(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
   _, err = db.Exec(fmt.Sprintf("INSERT INTO account(type, name, password) values(%d, '%s', '%s')", 3, username, password))
   if err != nil {
@@ -114,4 +122,13 @@ func GetAccountByID(pid int) (models.Account, error) {
 
   rows.Scan(&acc.ID, &acc.Name, &acc.Type, &acc.Password)
   return acc, nil
+}
+
+func CheckUsernameExists(username string) bool {
+  query := fmt.Sprintf("SELECT * FROM account WHERE name='%s'", username)
+  rows, err := db.Query(query)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return rows.Next()
 }
