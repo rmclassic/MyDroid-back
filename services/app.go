@@ -73,7 +73,7 @@ func GetBest(c *gin.Context) {
 
 
 
-  apps := GetBestOfCategory(category, page, per_page)
+  apps := GetBestOfCategoryAndSubs(category, page, per_page)
   c.JSON(200, gin.H{
     "result": "success",
     "data": apps,
