@@ -67,7 +67,7 @@ func PostComment(c *gin.Context) {
   }
 
   json.Unmarshal(body, &root)
-  query := fmt.Sprintf("INSERT INTO comment values (%d, %d, '%s')", int(root["sender"].(float64)), int(root["app"].(float64)), root["content"].(string))
+  query := fmt.Sprintf("INSERT INTO comment values (%d, %d, '%s')", int(root["app"].(float64)), int(root["sender"].(float64)), root["content"].(string))
   println(query)
   db.Exec(query)
 
