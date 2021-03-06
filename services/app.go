@@ -113,14 +113,46 @@ func GetLatest(c *gin.Context) {
   category := c.Param("category")
 
 
-  query := fmt.Sprintf("select app.id, app.name, description, date_modified, publisher_id, account.name, app_category.category_id, category.name FROM app JOIN account ON publisher_id=account.id JOIN app_category ON app.id=app_category.app_id JOIN category ON category_id=category.id where category.name='%s' ORDER BY date_modified DESC;", category)
-  rows, err := db.Query(query)
-  if err != nil {
-    c.JSON(200, gin.H{
-      "result": "fail",
-      "message": err,
-    })
+  apps := GetLatestOfCategoryAndSubs(category)
+
+  c.JSON(200, gin.H{
+    "result": "success",
+    "data": apps,
+  })
+}
+
+
+func GetLatestOfCategoryAndSubs(category string) []models.App {
+  apps := GetLatestOfCategory(category)
+  subCats := GetSubCategories(category)
+
+  for _, subCat := range(subCats) {
+    subApps := GetLatestOfCategoryAndSubs(subCat)
+    for _, sa := range(subApps) {
+      apps = append(apps, sa)
+    }
   }
+
+  return apps
+}
+
+func GetSubCategories(category string) []string {
+  query := fmt.Sprintf("select name from (select id from category where name='%s') cat JOIN category ON category.parent_id=cat.id", category)
+  rows, _ := db.Query(query)
+
+  subCats := make([]string, 0)
+  for rows.Next() {
+    subCat := ""
+    rows.Scan(&subCat)
+    subCats = append(subCats, subCat)
+  }
+
+  return subCats
+}
+
+func GetLatestOfCategory(category string) ([]models.App) {
+  query := fmt.Sprintf("select app.id, app.name, description, date_modified, publisher_id, account.name, app_category.category_id, category.name FROM app JOIN account ON publisher_id=account.id JOIN app_category ON app.id=app_category.app_id JOIN category ON category_id=category.id where category.name='%s' ORDER BY date_modified DESC;", category)
+  rows, _ := db.Query(query)
 
   apps := make([]models.App, 0)
 
@@ -134,12 +166,8 @@ func GetLatest(c *gin.Context) {
       apps = append(apps, tempapp)
     }
 
-    c.JSON(200, gin.H{
-      "result": "success",
-      "data": apps,
-    })
+    return apps
 }
-
 
 
 func GetAppById(c *gin.Context) {
