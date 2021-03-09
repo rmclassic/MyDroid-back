@@ -162,7 +162,7 @@ func GetSubCategories(category string) []string {
 }
 
 func GetLatestOfCategory(category string) ([]models.App) {
-  query := fmt.Sprintf("select app.id, app.name, description, date_modified, publisher_id, account.name, app_category.category_id, category.name FROM app JOIN account ON publisher_id=account.id JOIN app_category ON app.id=app_category.app_id JOIN category ON category_id=category.id where category.name='%s' ORDER BY date_modified DESC;", category)
+  query := fmt.Sprintf("select app.id, app.name, description, date_modified, publisher_id, account.name, app_category.category_id, category.name FROM app JOIN account ON publisher_id=account.id JOIN app_category ON app.id=app_category.app_id JOIN category ON category_id=category.id where category.name='%s' ORDER BY date_modified DESC", category)
   rows, _ := db.Query(query)
 
   apps := make([]models.App, 0)
